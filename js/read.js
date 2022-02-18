@@ -4,6 +4,7 @@ const buttonEditForOffer = document.querySelector('#edit')
 content.value = `dsfsd <a bebra="bebra" href=""></a> fsdfsf
 dsfsd <a href=""></a> fsdfsf
 <a></a>`
+const radio = document.querySelectorAll('.teg__radio')
 class Content {
     constructor(content) {
         this.content = content
@@ -25,20 +26,16 @@ class InputFile extends Content {
         this.reader = new FileReader()
         this.input.addEventListener('change', (e) => {
             this.file = e.target.files[0]
-            console.log(this.file)
             this.readFile(this.reader, this.file)
         })
     }
 
     readFile(render, file) {
         render.addEventListener('load', (e) => {
-            console.log(this.file)
             this.pushContent(render.result)
-            console.log('load')
         })
 
         let text = render.readAsText(file)
-        console.log(text)
     }
 }
 
@@ -77,10 +74,21 @@ class ContentEditOffer extends Content {
 }
 
 class getInfo extends Content {
-    constructor(content, tegInner, atributeInner) {
+    constructor(content, tegInner, atributeInner, replaceInner) {
         super(content)
         this.tegInner = tegInner
         this.atributeInner = atributeInner
+        this.replaceAtribute = replaceInner
+        this.radio = radio
+        this.radio.forEach((elem) => {
+            elem.addEventListener('change', () => {
+                if (this.getActiveRadio() === "replace") {
+                    document.querySelector('.teg__block-replece').classList.add('active')
+                } else {
+                    document.querySelector('.teg__block-replece').classList.remove('active')
+                }
+            })
+        })
     }
 
     getTeg() {
@@ -91,27 +99,58 @@ class getInfo extends Content {
         return this.atributeInner.value
     }
 
-}
-
-class EditAtrubute extends getInfo {
-    constructor(tegInner, atributeInner, buttonForEdit) {
-        super(content, tegInner, atributeInner)
-        console.log(tegInner, atributeInner, buttonForEdit, this.getContent(), this.getTeg())
-        buttonForEdit.addEventListener('click', () => {
-            this.EditAtrubute()
-        })
+    getReplace() {
+        return this.replaceAtribute.value
     }
 
-    EditAtrubute() {
-        if (this.getTeg() === "") {
+    getActiveRadio() {
+        let activeRadio
+        this.radio.forEach((elem) => {
+            if (elem.checked) {
+                activeRadio = elem.value
+            }
+        })
+        return activeRadio
+    }
+}
+
+class EditHtml extends getInfo {
+    constructor(content, tegInner, atributeInner, replaceInner) {
+        super(content, tegInner, atributeInner, replaceInner)
+    }
+
+    EditAtribute() {
+        if (this.getTeg() === "" && this.getAtribute() !== "") {
             let regex = new RegExp(`${this.getAtribute()}=("|')([^"']*)("|')`, 'ig')
-            console.log(regex)
             let newString = this.getContent().replace(regex, (search, index, input) => {
                 return ''
             })
-            console.log(newString)
             this.pushContent(newString)
         }
+    }
+
+    replaceA() {
+        if (this.getReplace() !== "" && this.getTeg() === "") {
+            let regex = RegExp(`${this.getAtribute()}=("|')([^"']*)("|')`, 'ig')
+            let newString = this.getContent().replace(regex, (search, index, input) => {
+                let contentAtrib = search.match(/("|')([^"']*)("|')/)
+                return search.substring(0, contentAtrib.index) + `"` + this.getReplace() + `"`
+            })
+            this.pushContent(newString)
+        }
+    }
+}
+
+class EditAtrubute extends EditHtml {
+    constructor(tegInner, atributeInner, replaceInner, buttonForEdit) {
+        super(content, tegInner, atributeInner, replaceInner)
+        buttonForEdit.addEventListener('click', () => {
+            if (this.getActiveRadio() === "delete") {
+                this.EditAtribute()
+            } else if (this.getActiveRadio() === "replace") {
+                this.replaceA()
+            }
+        })
     }
 }
 
@@ -119,5 +158,6 @@ new InputFile(input)
 new ContentEditOffer(buttonEditForOffer)
 const atribute = document.querySelector('#atribute')
 const teg = document.querySelector("#teg")
+const replace = document.querySelector("#replace")
 const EditAtrubuteButton = document.querySelector('#remove-atribute')
-new EditAtrubute(teg, atribute, EditAtrubuteButton)
+new EditAtrubute(teg, atribute, replace, EditAtrubuteButton)

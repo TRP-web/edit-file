@@ -26,3 +26,11 @@
     display: block;
     height: 400px;
 }
+
+.teg__block-replece{
+    display: none;
+}
+
+.teg__block-replece.active{
+    display: block;
+}

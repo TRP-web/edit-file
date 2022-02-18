@@ -15,8 +15,25 @@
     <div class="teg">
         <h2>HTML atribute edit</h2>
         <h4>remove atribute</h4>
-        <input type="text" id="atribute" placeholder="atribute for delete in teg">
-        <input type="text" id="teg" placeholder="teg for delete atribute">
+        <div class="teg__radio-innner">
+            <input type="radio" name="or" id="delete" class="teg__radio" value="delete" checked>
+            delete
+            <input type="radio" name="or" id="replece" class="teg__radio" value="replace">
+            replece
+            <script>
+
+
+
+                console.log(document.querySelector('#delete'))
+            </script>
+        </div>
+        <div class="teg__block-delete">
+            <input type="text" id="atribute" placeholder="atribute for delete in teg" value="href">
+            <input type="text" id="teg" placeholder="teg for delete atribute">
+        </div>
+        <div class="teg__block-replece">
+            <input type="text" id="replace" placeholder="edit content atribute" value="test">
+        </div>
 
         <button id="remove-atribute">Remove atribute</button>
     </div>
