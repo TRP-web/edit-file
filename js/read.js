@@ -2,8 +2,9 @@ const input = document.querySelector('#file-inner')
 const content = document.querySelector('#content')
 const buttonEditForOffer = document.querySelector('#edit')
 content.value = `dsfsd <a bebra="bebra" href=""></a> fsdfsf
-dsfsd <a href=""></a> fsdfsf
-<a></a>`
+dsfsd <a href></a> fsdfsf
+<a></a>
+<link href="">`
 const radio = document.querySelectorAll('.teg__radio')
 class Content {
     constructor(content) {
@@ -121,9 +122,19 @@ class EditHtml extends getInfo {
 
     EditAtribute() {
         if (this.getTeg() === "" && this.getAtribute() !== "") {
-            let regex = new RegExp(`${this.getAtribute()}=("|')([^"']*)("|')`, 'ig')
+            let regex = new RegExp(`${this.getAtribute()}([\\s>]|=("|')([^"']*)("|'))`, 'gm')
             let newString = this.getContent().replace(regex, (search, index, input) => {
-                return ''
+                return this.testSearch(search)
+            })
+            this.pushContent(newString)
+        } else if (this.getTeg() !== "" && this.getAtribute() !== "") {
+            let regex = new RegExp(`<${this.getTeg()}\\s[^>]*>`, 'gm')
+            let newString = this.getContent().replace(regex, (search, index, input) => {
+                let regexAtribute = new RegExp(`${this.getAtribute()}([\\s>]|=("|')([^"']*)("|'))`, '')
+                let returnString = search.replace(regexAtribute, (search) => {
+                    return this.testSearch(search)
+                })
+                return returnString
             })
             this.pushContent(newString)
         }
@@ -131,12 +142,37 @@ class EditHtml extends getInfo {
 
     replaceA() {
         if (this.getReplace() !== "" && this.getTeg() === "") {
-            let regex = RegExp(`${this.getAtribute()}=("|')([^"']*)("|')`, 'ig')
+            let regex = RegExp(`${this.getAtribute()}([\\s>]|=("|')([^"']*)("|'))`, 'gm')
             let newString = this.getContent().replace(regex, (search, index, input) => {
                 let contentAtrib = search.match(/("|')([^"']*)("|')/)
-                return search.substring(0, contentAtrib.index) + `"` + this.getReplace() + `"`
+                if (contentAtrib === null) {
+                    return `${this.getAtribute()}="${this.getReplace()}"`
+                } else {
+                    return search.substring(0, contentAtrib.index) + `"` + this.getReplace() + `"`
+                }
             })
             this.pushContent(newString)
+        } else if (this.getReplace() !== "" && this.getTeg() !== "") {
+            let regex = new RegExp(`<${this.getTeg()}\\s[^>]*>`, 'gm')
+            let newString = this.getContent().replace(regex, (search, index, input) => {
+                let regexAtribute = new RegExp(`${this.getAtribute()}([\\s>]|=("|')([^"']*)("|'))`, '')
+                let result = search.replace(regexAtribute, (search) => {
+                    console.log(search)
+                    return this.getAtribute() + `="${this.getReplace()}"` + this.testSearch(search)
+                })
+
+                return result
+            })
+            this.pushContent(newString)
+        }
+    }
+    testSearch(search) {
+        if (search[search.length - 1] === ">") {
+            return '>'
+        } else if (search[search.length - 1] === " ") {
+            return ' '
+        } else {
+            return ''
         }
     }
 }
@@ -161,3 +197,7 @@ const teg = document.querySelector("#teg")
 const replace = document.querySelector("#replace")
 const EditAtrubuteButton = document.querySelector('#remove-atribute')
 new EditAtrubute(teg, atribute, replace, EditAtrubuteButton)
+
+
+let test = new RegExp(' \\s', 'g')
+console.log(test)
