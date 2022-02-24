@@ -123,13 +123,13 @@ class EditHtml extends getInfo {
     EditAtribute() {
         if (this.getTeg() === "" && this.getAtribute() !== "") {
             let regex = new RegExp(`${this.getAtribute()}([\\s>]|=("|')([^"']*)("|'))`, 'gm')
-            let newString = this.getContent().replace(regex, (search, index, input) => {
+            let newString = this.getContent().replace(regex, (search) => {
                 return this.testSearch(search)
             })
             this.pushContent(newString)
         } else if (this.getTeg() !== "" && this.getAtribute() !== "") {
             let regex = new RegExp(`<${this.getTeg()}\\s[^>]*>`, 'gm')
-            let newString = this.getContent().replace(regex, (search, index, input) => {
+            let newString = this.getContent().replace(regex, (search) => {
                 let regexAtribute = new RegExp(`${this.getAtribute()}([\\s>]|=("|')([^"']*)("|'))`, '')
                 let returnString = search.replace(regexAtribute, (search) => {
                     return this.testSearch(search)
@@ -143,7 +143,7 @@ class EditHtml extends getInfo {
     replaceA() {
         if (this.getReplace() !== "" && this.getTeg() === "") {
             let regex = RegExp(`${this.getAtribute()}([\\s>]|=("|')([^"']*)("|'))`, 'gm')
-            let newString = this.getContent().replace(regex, (search, index, input) => {
+            let newString = this.getContent().replace(regex, (search) => {
                 let contentAtrib = search.match(/("|')([^"']*)("|')/)
                 if (contentAtrib === null) {
                     return `${this.getAtribute()}="${this.getReplace()}"`
@@ -154,7 +154,7 @@ class EditHtml extends getInfo {
             this.pushContent(newString)
         } else if (this.getReplace() !== "" && this.getTeg() !== "") {
             let regex = new RegExp(`<${this.getTeg()}\\s[^>]*>`, 'gm')
-            let newString = this.getContent().replace(regex, (search, index, input) => {
+            let newString = this.getContent().replace(regex, (search) => {
                 let regexAtribute = new RegExp(`${this.getAtribute()}([\\s>]|=("|')([^"']*)("|'))`, '')
                 let result = search.replace(regexAtribute, (search) => {
                     console.log(search)
@@ -198,6 +198,3 @@ const replace = document.querySelector("#replace")
 const EditAtrubuteButton = document.querySelector('#remove-atribute')
 new EditAtrubute(teg, atribute, replace, EditAtrubuteButton)
 
-
-let test = new RegExp(' \\s', 'g')
-console.log(test)
